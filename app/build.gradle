@@ -1,0 +1,54 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+
+project.afterEvaluate {
+    project.tasks.findAll { task -> task.name.startsWith('compile') && task.name.endsWith('Kotlin') }.each { task ->
+        task.experimentalIncremental = true
+    }
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.cypressworks.kotlinicdaggerissue"
+        minSdkVersion 21
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions.incremental = false
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    compile 'com.google.dagger:dagger:2.0.2'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+    kapt 'com.google.dagger:dagger-compiler:2.0.2'
+}
+
+buildscript {
+    ext.kotlin_version = '0.1-SNAPSHOT'
+    repositories {
+        jcenter()
+        maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+repositories {
+    jcenter()
+    maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
+}
